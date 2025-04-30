@@ -44,7 +44,9 @@ const skillsData: SkillCategory[] = [
 
 export default function SkillsSection() {
   const [visibleSkills, setVisibleSkills] = useState<string[]>([]);
+  const [animateIn, setAnimateIn] = useState(false);
 
+  // Handle scroll-based animations
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -54,22 +56,43 @@ export default function SkillsSection() {
             if (skillName && !visibleSkills.includes(skillName)) {
               setVisibleSkills((prev) => [...prev, skillName]);
             }
+            if (entry.target.id === "skills-section") {
+              setAnimateIn(true);
+            }
+          } else if (entry.target.id === "skills-section" && !entry.isIntersecting) {
+            // Reset animation when out of viewport for re-entry animation
+            if (entry.boundingClientRect.top > 0) {
+              setAnimateIn(false);
+            }
           }
         });
       },
-      { threshold: 0.1 }
+      { threshold: [0.1, 0.5] }
     );
 
     document.querySelectorAll("[data-skill]").forEach((el) => {
       observer.observe(el);
     });
+    
+    const skillsSection = document.getElementById("skills-section");
+    if (skillsSection) {
+      observer.observe(skillsSection);
+    }
 
     return () => observer.disconnect();
   }, [visibleSkills]);
 
   return (
-    <section id="skills" className="section-padding">
-      <div className="container mx-auto">
+    <section 
+      id="skills" 
+      className="section-padding relative overflow-hidden"
+    >
+      <div 
+        id="skills-section"
+        className={`container mx-auto transition-all duration-1000 ${
+          animateIn ? 'translate-y-0 opacity-100' : 'translate-y-24 opacity-0'
+        }`}
+      >
         <div className="flex items-center gap-3 mb-10 animate-on-scroll">
           <Award className="h-8 w-8 text-primary" />
           <h2 className="section-heading">Skills & Expertise</h2>
@@ -80,7 +103,12 @@ export default function SkillsSection() {
             <div 
               key={category.name} 
               className="animate-on-scroll"
-              style={{ transitionDelay: `${catIndex * 200}ms` }}
+              style={{ 
+                transitionDelay: `${catIndex * 200}ms`,
+                transform: animateIn ? 'translateX(0)' : catIndex % 2 === 0 ? 'translateX(-50px)' : 'translateX(50px)',
+                opacity: animateIn ? 1 : 0,
+                transition: 'transform 0.8s ease-out, opacity 0.8s ease-out',
+              }}
             >
               <h3 className="text-xl font-bold mb-6 relative inline-block">
                 {category.name}
@@ -89,7 +117,17 @@ export default function SkillsSection() {
 
               <div className="space-y-5">
                 {category.skills.map((skill, index) => (
-                  <div key={skill.name} className="space-y-2" data-skill={skill.name}>
+                  <div 
+                    key={skill.name} 
+                    className="space-y-2" 
+                    data-skill={skill.name}
+                    style={{
+                      opacity: visibleSkills.includes(skill.name) ? 1 : 0,
+                      transform: visibleSkills.includes(skill.name) ? 'translateY(0)' : 'translateY(20px)',
+                      transition: 'opacity 0.5s ease-out, transform 0.5s ease-out',
+                      transitionDelay: `${(index * 100) + (catIndex * 150)}ms`,
+                    }}
+                  >
                     <div className="flex justify-between">
                       <span className="font-medium">{skill.name}</span>
                       <span className="text-sm text-foreground/70">

@@ -138,6 +138,7 @@
   }
 }
 
+/* Enhanced scroll animations */
 .animate-on-scroll {
   opacity: 0;
   transform: translateY(20px);
@@ -149,10 +150,40 @@
   transform: translateY(0);
 }
 
-/* Loading animation */
+/* Enhanced section animations */
+section {
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out, filter 0.5s ease-out;
+}
+
+.section-inactive {
+  opacity: 0.3;
+  filter: blur(2px);
+  transform: scale(0.98);
+}
+
+.section-active {
+  opacity: 1;
+  filter: blur(0);
+  transform: scale(1);
+}
+
+.section-in-view {
+  animation: sectionFadeIn 0.8s ease-out forwards;
+}
+
+@keyframes sectionFadeIn {
+  from { opacity: 0.5; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Loading animation enhancements */
 .loading-overlay {
   @apply fixed inset-0 flex items-center justify-center bg-background z-50;
   animation: fadeOut 0.5s ease-in-out 2s forwards;
+}
+
+.loader-container {
+  @apply flex flex-col items-center justify-center;
 }
 
 .loader {
@@ -174,7 +205,48 @@
   animation: rotate-slow 2s linear reverse infinite;
 }
 
+.loader-text {
+  @apply text-foreground/80 font-medium;
+}
+
 @keyframes fadeOut {
   from { opacity: 1; visibility: visible; }
   to { opacity: 0; visibility: hidden; }
+}
+
+/* Fun entrance animations for elements */
+.slide-in-left {
+  animation: slideInLeft 0.8s ease-out forwards;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.8s ease-out forwards;
+}
+
+.slide-in-bottom {
+  animation: slideInBottom 0.8s ease-out forwards;
+}
+
+.fade-scale-in {
+  animation: fadeScaleIn 0.8s ease-out forwards;
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideInBottom {
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeScaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }

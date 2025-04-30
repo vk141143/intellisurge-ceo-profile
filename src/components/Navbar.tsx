@@ -17,12 +17,29 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   const [scrolled, setScrolled] = useState(false);
+  const [scrollDirection, setScrollDirection] = useState<"up" | "down">("up");
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isNavVisible, setIsNavVisible] = useState(true);
 
-  // Handle scroll to set active section and navbar background
+  // Handle scroll to set active section, navbar background, and hide/show navbar
   useEffect(() => {
     const handleScroll = () => {
+      const currentScrollY = window.scrollY;
       const sections = document.querySelectorAll("section[id]");
       const scrollPosition = window.scrollY + 100;
+
+      // Determine scroll direction
+      if (currentScrollY > lastScrollY) {
+        setScrollDirection("down");
+        if (currentScrollY > 300 && currentScrollY - lastScrollY > 10) {
+          setIsNavVisible(false);
+        }
+      } else {
+        setScrollDirection("up");
+        setIsNavVisible(true);
+      }
+      
+      setLastScrollY(currentScrollY);
 
       // Check if page has been scrolled to add background
       if (scrollPosition > 50) {
@@ -47,7 +64,7 @@ export default function Navbar() {
     handleScroll(); // Initial check
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [lastScrollY]);
 
   // Smooth scroll to section when clicking on nav links
   const scrollToSection = (sectionId: string) => {
@@ -68,12 +85,16 @@ export default function Navbar() {
         "fixed top-0 w-full z-50 transition-all duration-300",
         scrolled
           ? "bg-background/80 backdrop-blur-md shadow-sm py-3"
-          : "bg-transparent py-5"
+          : "bg-transparent py-5",
+        isNavVisible ? "translate-y-0" : "-translate-y-full"
       )}
     >
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo */}
-        <a href="#" className="text-xl md:text-2xl font-bold text-primary">
+        <a 
+          href="#" 
+          className="text-xl md:text-2xl font-bold text-primary transition-all hover:scale-105"
+        >
           IntelliSurge
         </a>
 
@@ -84,7 +105,7 @@ export default function Navbar() {
               key={link.name}
               href={link.href}
               className={cn(
-                "nav-link",
+                "nav-link relative overflow-hidden",
                 activeSection === link.href.substring(1) && "active"
               )}
               onClick={(e) => {
@@ -92,7 +113,15 @@ export default function Navbar() {
                 scrollToSection(link.href.substring(1));
               }}
             >
-              {link.name}
+              <span className="relative z-10">{link.name}</span>
+              {activeSection === link.href.substring(1) && (
+                <span 
+                  className="absolute inset-0 bg-primary/10 rounded-lg -z-[1]"
+                  style={{
+                    animation: "pulse-subtle 2s ease-in-out infinite"
+                  }}
+                ></span>
+              )}
             </a>
           ))}
           <ThemeToggle />
@@ -125,16 +154,22 @@ export default function Navbar() {
         )}
       >
         <div className="py-4 px-4 flex flex-col">
-          {navLinks.map((link) => (
+          {navLinks.map((link, index) => (
             <a
               key={link.name}
               href={link.href}
               className={cn(
-                "py-3 text-lg font-medium border-b border-border transition-colors",
+                "py-3 text-lg font-medium border-b border-border transition-all",
                 activeSection === link.href.substring(1)
                   ? "text-primary"
                   : "text-foreground/70 hover:text-foreground"
               )}
+              style={{
+                transitionDelay: `${index * 50}ms`,
+                transform: isOpen ? "translateX(0)" : "translateX(20px)",
+                opacity: isOpen ? 1 : 0,
+                transition: "transform 0.3s ease, opacity 0.3s ease"
+              }}
               onClick={(e) => {
                 e.preventDefault();
                 scrollToSection(link.href.substring(1));
