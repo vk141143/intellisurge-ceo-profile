@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { School } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 type Education = {
   id: number;
@@ -99,66 +100,93 @@ export default function EducationSection() {
   return (
     <section id="education" className="section-padding bg-muted/50">
       <div className="container mx-auto">
-        <div className="flex items-center gap-3 mb-10 animate-on-scroll">
+        <div className="flex items-center gap-3 mb-12 animate-on-scroll">
           <School className="h-8 w-8 text-primary" />
           <h2 className="section-heading">Education</h2>
         </div>
         
-        <div className="relative mt-16">
-          {educationData.map((edu, index) => (
-            <div
-              key={edu.id}
-              ref={(el) => (timelineRefs.current[index] = el)}
-              data-id={edu.id}
-              className={`timeline-item ${visibleItems.includes(edu.id) ? "opacity-100" : ""}`}
-              style={{
-                transitionDelay: `${(index * 200)}ms`
-              }}
-            >
-              <Card className="card-hover bg-card/50 backdrop-blur-sm">
-                <CardHeader className="pb-2">
-                  <div className="flex flex-wrap justify-between gap-2 items-start">
-                    <div>
-                      <h3 className="font-bold text-xl">{edu.institution}</h3>
-                      <p className="text-accent-foreground font-medium">{edu.degree}</p>
-                    </div>
-                    <div className="flex flex-col items-end gap-1">
-                      <span className="text-sm text-muted-foreground">{edu.duration}</span>
-                      {edu.grade && (
-                        <Badge className="ml-auto">{`Grade: ${edu.grade}`}</Badge>
-                      )}
-                    </div>
-                  </div>
-                </CardHeader>
+        <div className="relative">
+          {/* Central Timeline Line */}
+          <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-primary/30 transform -translate-x-1/2 z-0"></div>
+          
+          {educationData.map((edu, index) => {
+            const isEven = index % 2 === 0;
+            
+            return (
+              <div
+                key={edu.id}
+                ref={(el) => (timelineRefs.current[index] = el)}
+                data-id={edu.id}
+                className={`relative mb-16 last:mb-0 grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8`}
+              >
+                {/* Timeline dot */}
+                <div className="hidden md:block absolute left-1/2 top-6 w-6 h-6 bg-primary rounded-full shadow-lg transform -translate-x-1/2 z-10 border-4 border-background"></div>
                 
-                <CardContent className="space-y-3 pt-3">
-                  {edu.description && (
-                    <p className="text-sm text-foreground/80">{edu.description}</p>
-                  )}
-                  
-                  {edu.activities && (
-                    <div>
-                      <p className="text-sm font-semibold">Activities:</p>
-                      <p className="text-sm text-foreground/80">{edu.activities}</p>
-                    </div>
-                  )}
-                  
-                  {edu.skills && edu.skills.length > 0 && (
-                    <div>
-                      <p className="text-sm font-semibold mb-2">Skills:</p>
-                      <div className="flex flex-wrap gap-2">
-                        {edu.skills.map((skill, idx) => (
-                          <Badge key={idx} variant="outline" className="animate-scale-up" style={{ animationDelay: `${idx * 100}ms` }}>
-                            {skill}
-                          </Badge>
-                        ))}
+                {/* Content - alternating sides */}
+                <div className={`md:col-span-1 ${isEven ? 'md:pr-12' : 'md:col-start-2 md:pl-12'}`}>
+                  <Card 
+                    className={`card-hover glass-card backdrop-blur-sm bg-card/60 border-primary/10 shadow-lg overflow-hidden transition-all duration-500 transform ${
+                      visibleItems.includes(edu.id) 
+                        ? 'opacity-100 ' + (isEven ? 'translate-x-0' : 'translate-x-0') 
+                        : 'opacity-0 ' + (isEven ? '-translate-x-full' : 'translate-x-full')
+                    }`}
+                  >
+                    <CardHeader className="pb-2 relative z-10">
+                      <div className="flex flex-wrap justify-between gap-2 items-start">
+                        <div>
+                          <h3 className="font-bold text-xl">{edu.institution}</h3>
+                          <p className="text-accent-foreground font-medium">{edu.degree}</p>
+                        </div>
+                        <div className="flex flex-col items-end gap-1">
+                          <span className="text-sm text-muted-foreground">{edu.duration}</span>
+                          {edu.grade && (
+                            <Badge variant="secondary" className="ml-auto">{`Grade: ${edu.grade}`}</Badge>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-          ))}
+                    </CardHeader>
+                    
+                    <CardContent className="space-y-3 pt-3 relative z-10">
+                      {edu.description && (
+                        <p className="text-sm text-foreground/80">{edu.description}</p>
+                      )}
+                      
+                      {edu.activities && (
+                        <div>
+                          <p className="text-sm font-semibold">Activities:</p>
+                          <p className="text-sm text-foreground/80">{edu.activities}</p>
+                        </div>
+                      )}
+                      
+                      {edu.skills && edu.skills.length > 0 && (
+                        <div>
+                          <p className="text-sm font-semibold mb-2">Skills:</p>
+                          <div className="flex flex-wrap gap-2">
+                            {edu.skills.map((skill, idx) => (
+                              <Badge 
+                                key={idx} 
+                                variant="outline" 
+                                className="animate-scale-up hover:bg-primary/10 hover:scale-105 transition-all"
+                                style={{ animationDelay: `${idx * 100}ms` }}
+                              >
+                                {skill}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Semi-transparent decorative element */}
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 z-0"></div>
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                {/* Empty column for alternating layout */}
+                <div className={`hidden md:block md:col-span-1 ${!isEven ? 'md:col-start-1' : 'md:col-start-2'}`}></div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

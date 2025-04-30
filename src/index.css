@@ -136,6 +136,40 @@
   .glass-card {
     @apply bg-background/80 backdrop-blur-lg border border-background/50 shadow-md;
   }
+  
+  /* New glass morphism styles */
+  .neo-glass {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-lg;
+  }
+  
+  .neo-glass-dark {
+    @apply bg-black/20 backdrop-blur-md border border-white/10 shadow-lg;
+  }
+  
+  /* Text gradient */
+  .text-gradient-primary {
+    @apply bg-gradient-to-br from-primary via-primary/80 to-secondary bg-clip-text text-transparent;
+  }
+  
+  /* Form field animations */
+  .form-field {
+    @apply relative transition-all duration-300;
+  }
+  
+  .form-field input:focus,
+  .form-field textarea:focus {
+    @apply ring-2 ring-primary/30;
+  }
+  
+  /* Form submission animation */
+  .form-submitted {
+    animation: formSuccess 0.5s forwards;
+  }
+  
+  /* Scale up center animation */
+  .scale-up-center {
+    animation: scaleUpCenter 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+  }
 }
 
 /* Enhanced scroll animations */
@@ -207,6 +241,19 @@ section {
 
 .loader-text {
   @apply text-foreground/80 font-medium;
+}
+
+/* Form success animation */
+@keyframes formSuccess {
+  0% { transform: scale(1); opacity: 1; }
+  20% { transform: scale(0.95); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Scale up center animation */
+@keyframes scaleUpCenter {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 @keyframes fadeOut {
