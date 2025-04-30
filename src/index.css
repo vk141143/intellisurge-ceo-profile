@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
@@ -137,7 +136,7 @@
     @apply bg-background/80 backdrop-blur-lg border border-background/50 shadow-md;
   }
   
-  /* New glass morphism styles */
+  /* Glass morphism styles */
   .neo-glass {
     @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-lg;
   }
@@ -169,6 +168,22 @@
   /* Scale up center animation */
   .scale-up-center {
     animation: scaleUpCenter 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+  }
+  
+  /* Type writer animation */
+  .typewriter {
+    overflow: hidden;
+    white-space: nowrap;
+    display: inline-block;
+    position: relative;
+  }
+  
+  .typewriter-cursor {
+    display: inline-block;
+    width: 2px;
+    background-color: currentColor;
+    margin-left: 0.05em;
+    animation: blink 1s step-end infinite;
   }
 }
 
@@ -259,6 +274,12 @@ section {
 @keyframes fadeOut {
   from { opacity: 1; visibility: visible; }
   to { opacity: 0; visibility: hidden; }
+}
+
+/* Text cursor blink animation */
+@keyframes blink {
+  from, to { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 /* Fun entrance animations for elements */

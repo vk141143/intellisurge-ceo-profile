@@ -6,6 +6,16 @@ import { cn } from "@/lib/utils";
 
 export default function HeroSection() {
   const [loaded, setLoaded] = useState(false);
+  const [titleIndex, setTitleIndex] = useState(0);
+  const [displayText, setDisplayText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  
+  const titles = [
+    "Founder and CEO of IntelliSurge Technologies",
+    "Tech Entrepreneur",
+    "Freelancer"
+  ];
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -14,6 +24,54 @@ export default function HeroSection() {
     
     return () => clearTimeout(timer);
   }, []);
+
+  // Title animation effect
+  useEffect(() => {
+    let timeout: number;
+    
+    if (!loaded) return;
+    
+    const currentTitle = titles[titleIndex];
+    const typeSpeed = 100; // Speed of typing in ms
+    const deleteSpeed = 50; // Speed of deleting in ms
+    const completeDelay = 2000; // How long to show the complete title
+    
+    const animateTitle = () => {
+      setIsAnimating(true);
+      
+      if (!isDeleting && displayText !== currentTitle) {
+        // Typing effect
+        const nextText = currentTitle.substring(0, displayText.length + 1);
+        setDisplayText(nextText);
+        timeout = window.setTimeout(animateTitle, typeSpeed);
+      }
+      else if (!isDeleting && displayText === currentTitle) {
+        // Pause at the end of typing
+        timeout = window.setTimeout(() => {
+          setIsDeleting(true);
+          timeout = window.setTimeout(animateTitle, deleteSpeed);
+        }, completeDelay);
+      }
+      else if (isDeleting && displayText !== "") {
+        // Deleting effect
+        const nextText = currentTitle.substring(0, displayText.length - 1);
+        setDisplayText(nextText);
+        timeout = window.setTimeout(animateTitle, deleteSpeed);
+      }
+      else if (isDeleting && displayText === "") {
+        // Move to next title
+        setIsDeleting(false);
+        setTitleIndex((prev) => (prev + 1) % titles.length);
+        timeout = window.setTimeout(animateTitle, typeSpeed);
+      }
+    };
+    
+    timeout = window.setTimeout(animateTitle, 500);
+    
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [loaded, titleIndex, displayText, isDeleting, titles]);
 
   const scrollToContact = () => {
     const contactSection = document.getElementById("contact");
@@ -34,12 +92,22 @@ export default function HeroSection() {
       <div className="container mx-auto grid md:grid-cols-2 gap-8 items-center">
         <div className={cn("space-y-6", loaded ? "animate-fade-in" : "opacity-0")}>
           <div className="space-y-2">
-            <h2 className="font-medium text-primary">Tech Entrepreneur</h2>
+            <div className="h-8">
+              <h2 className="font-medium text-primary inline-flex">
+                <span className="relative overflow-hidden">
+                  <span className={cn(
+                    "inline-block transition-all duration-300",
+                    isAnimating ? "animate-pulse-subtle" : ""
+                  )}>{displayText}</span>
+                  <span className="animate-pulse ml-0.5 inline-block">|</span>
+                </span>
+              </h2>
+            </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
               JayaSri Krishna Nelluri
             </h1>
             <p className="mt-4 text-xl text-foreground/80 max-w-md">
-              Founder and CEO of IntelliSurge Technologies | Creating the Future of Innovation
+              Creating the Future of Innovation
             </p>
           </div>
           
