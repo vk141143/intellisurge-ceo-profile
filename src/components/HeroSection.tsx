@@ -32,9 +32,9 @@ export default function HeroSection() {
     if (!loaded) return;
     
     const currentTitle = titles[titleIndex];
-    const typeSpeed = 100; // Speed of typing in ms
-    const deleteSpeed = 50; // Speed of deleting in ms
-    const completeDelay = 2000; // How long to show the complete title
+    const typeSpeed = 50; // Speed of typing in ms - faster now (was 100)
+    const deleteSpeed = 25; // Speed of deleting in ms - faster now (was 50)
+    const completeDelay = 1500; // How long to show the complete title - shorter now (was 2000)
     
     const animateTitle = () => {
       setIsAnimating(true);
@@ -66,7 +66,7 @@ export default function HeroSection() {
       }
     };
     
-    timeout = window.setTimeout(animateTitle, 500);
+    timeout = window.setTimeout(animateTitle, 300); // Starting faster (was 500)
     
     return () => {
       clearTimeout(timeout);
@@ -96,10 +96,10 @@ export default function HeroSection() {
               <h2 className="font-medium text-primary inline-flex">
                 <span className="relative overflow-hidden">
                   <span className={cn(
-                    "inline-block transition-all duration-300",
+                    "inline-block transition-all duration-200", // Faster transition (was 300)
                     isAnimating ? "animate-pulse-subtle" : ""
                   )}>{displayText}</span>
-                  <span className="animate-pulse ml-0.5 inline-block">|</span>
+                  <span className="animate-pulse-fast ml-0.5 inline-block">|</span>
                 </span>
               </h2>
             </div>
